@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.toggleBtn {
+  font-family: 'Monaco', 'San Francisco', 'Helvetica Neue', 'Arial';
+  font-size: 0.8em;
+  height: 5em;
+  width: 12em;
+}
