@@ -52,7 +52,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    // this.fetchExampleData();
+    this.fetchExampleData();
     this.expressClientServerExample();
   }
 
