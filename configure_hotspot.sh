@@ -1,5 +1,11 @@
 #! /bin/bash
 
+### IMPORTANT!!
+### NOTE: make sure to update /etc/network/interfaces
+### ALSO: if wanting to revert this, it should be clear
+### just make sure to remove static ip address in dhcpcd
+### also... make sure to remove dnsmasq and default hostapd conf
+
 ### GIVE wlan0 a STATIC ip address
 cat > /etc/dhcpcd.conf <<- EndOfMessage
 interface wlan0
