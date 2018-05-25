@@ -15,5 +15,8 @@ db.<new|old collection name>.update({date:'fake-date'}, {$set: {name:'fake-name'
 db.<dbname|collection>.drop() -> deletes the db or collection
 
 
-#### 
+#### USER INTERFACE
+Using a Grid Gallery for Video Stills
+https://github.com/benhowell/react-grid-gallery
+
 
