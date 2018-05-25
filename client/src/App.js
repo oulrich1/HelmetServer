@@ -75,6 +75,7 @@ class App extends Component {
         </header> */}
         <p className="App-intro">
           <button
+            bsStyle="danger"
             id="toggleRecordingBtn"
             className="toggleBtn"
             onClick={() => this.handleToggleRecording()}>{buttonText}</button>
