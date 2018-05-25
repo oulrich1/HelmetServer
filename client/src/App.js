@@ -1,63 +1,129 @@
 import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Gallery from 'react-grid-gallery';
+import CheckButton from 'react-grid-gallery';
 
-const BTN_TEXT_RECORDING_ON = "Stop Recording";
-const BTN_TEXT_RECORDING_OFF = "Start Recording";
+const log = console.log;
+const BTN_TEXT_RECORDING_ON = "Stop";
+const BTN_TEXT_RECORDING_OFF = "Record";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      user: 'oriah',
       recordingOn: false,
-      pictures: [],
-      response: ''
+      videoStills: [],
+
+      images: [],
+      selectAllChecked: false
     };
+
+    this.onSelectImage = this.onSelectImage.bind(this);
+    this.getSelectedImages = this.getSelectedImages.bind(this);
   }
+
+  allImagesSelected (images) {
+    var f = images.filter(
+        function (img) {
+            return img.isSelected == true;
+        }
+    );
+    return f.length == images.length;
+  }
+
+  onSelectImage (index, image) {
+    var images = this.state.images.slice();
+    var img = images[index];
+    if(img.hasOwnProperty("isSelected"))
+        img.isSelected = !img.isSelected;
+    else
+        img.isSelected = true;
+
+    this.setState({
+        images: images
+    });
+
+    if(this.allImagesSelected(images)){
+        this.setState({
+            selectAllChecked: true
+        });
+    }
+    else {
+        this.setState({
+            selectAllChecked: false
+        });
+    }
+  }
+
+  getSelectedImages () {
+    var selected = [];
+    for(var i = 0; i < this.state.images.length; i++)
+        if(this.state.images[i].isSelected == true)
+            selected.push(i);
+    return selected;
+  }
+
 
   fetchExampleData()
   {
     fetch('https://randomuser.me/api/?results=10').then(results => {
       return results.json();
     }).then(data => {
-      let pictures = data
+      let images = data
         .results
         .map((pic) => {
-          return (
-            <div key={pic.results}>
-              <img src={pic.picture.medium}/>
-            </div>
-          )
+          return {
+            src: pic.picture.large,
+            thumbnail: pic.picture.medium,
+            thumbnailWidth: 64,
+            thumbnailHeight: 64,
+            caption: "Test",
+            isSelected: false
+          };
         });
-      this.setState({pictures: pictures});
-      console.log("state", this.state.pictures);
+      this.setState({images: images});
+      // console.log("state", this.state.pictures);
     });
   }
 
-  expressClientServerExample()
-  {
-    this
-      .callApi()
-      .then(res => this.setState({response: res.express}))
-      .catch(err => console.log(err));
-  }
-  callApi = async() => {
-    const response = await fetch('/api/hello');
+  callApi = async(endpoint) => {
+    const response = await fetch(endpoint);
     const body = await response.json();
-
     if (response.status !== 200) 
       throw Error(body.message);
-    
     return body;
   };
 
+  fetchVideos(userName)
+  {
+    log('UserName: ' + userName); 
+    this
+      .callApi('/videos?userName=' + userName)
+      .then(res => {
+        let videoStills = res.videos.map((video) => {
+          return {
+            src: video.thumb,
+            thumbnail: video.thumb,
+            thumbnailWidth: 48,
+            thumbnailHeight: 48,
+            caption: video.name
+          };
+        });
+        this.setState({
+          videoStills: videoStills
+        });
+      })
+      .catch(err => console.log(err));
+  }
+
   componentDidMount() {
     this.fetchExampleData();
-    this.expressClientServerExample();
+    this.fetchVideos(this.state.user);
   }
 
   handleToggleRecording() {
-
     this.setState({
       recordingOn: !this.state.recordingOn
     });
@@ -69,20 +135,51 @@ class App extends Component {
       : BTN_TEXT_RECORDING_OFF;
     return (
       <div className="App">
+        <h1>Hello H1</h1>
         {/* <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header> */}
         <p className="App-intro">
           <button
-            bsStyle="danger"
             id="toggleRecordingBtn"
-            className="toggleBtn"
+            className="btn btn-primary btn-lg"
             onClick={() => this.handleToggleRecording()}>{buttonText}</button>
         </p>
-        <p className="Intro">{this.state.response}</p>
-        <div className="imageList">
-          {this.state.pictures}
+        <div className="videosList" style={{
+                    display: "block",
+                    minHeight: "1px",
+                    width: "65%",
+                    margin: "auto",
+                    border: "1px solid #ddd",
+                    overflow: "auto"}}>
+          <Gallery
+              images={this.state.videoStills}
+              rowHeight={48}
+              enableLightbox={false}
+              enableImageSelection={false}/>
+            </div>
+        <br/>
+
+
+
+        <div style={{
+                padding: "2px",
+                color: "#666"
+            }}>Selected images: {this.getSelectedImages().toString()}</div>
+        <div className="userList" style={{
+                    display: "block",
+                    minHeight: "1px",
+                    width: "65%",
+                    margin: "auto",
+                    border: "1px solid #ddd",
+                    overflow: "auto"}}>
+          <Gallery
+              images={this.state.images}
+              rowHeight={64}
+              showLightboxThumbnails={true}
+              onSelectImage={this.onSelectImage}
+              />
         </div>
       </div>
     );
