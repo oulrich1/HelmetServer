@@ -98,7 +98,6 @@ class App extends Component {
 
   fetchVideos(userName)
   {
-    log('UserName: ' + userName); 
     this
       .callApi('/videos?userName=' + userName)
       .then(res => {
@@ -118,9 +117,32 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
+  fetchImages(userName)
+  {
+    this
+      .callApi('/images?userName=' + userName)
+      .then(res => {
+        let sampleImages = res.images.map((image) => {
+          log(image);
+          return {
+            src: image,
+            thumbnail: image,
+            thumbnailWidth: 64,
+            thumbnailHeight: 64,
+            caption: ''
+          };
+        });
+        this.setState({
+          images: sampleImages
+        });
+      })
+      .catch(err => console.log(err));
+  }
+
   componentDidMount() {
+    // this.fetchVideos(this.state.user);
+    this.fetchImages(this.state.user);
     this.fetchExampleData();
-    this.fetchVideos(this.state.user);
   }
 
   handleToggleRecording() {
@@ -135,7 +157,7 @@ class App extends Component {
       : BTN_TEXT_RECORDING_OFF;
     return (
       <div className="App">
-        <h1>Hello H1</h1>
+        <h1>Helmet Camera</h1>
         {/* <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
@@ -161,8 +183,6 @@ class App extends Component {
             </div>
         <br/>
 
-
-
         <div style={{
                 padding: "2px",
                 color: "#666"
@@ -176,7 +196,7 @@ class App extends Component {
                     overflow: "auto"}}>
           <Gallery
               images={this.state.images}
-              rowHeight={64}
+              rowHeight={128}
               showLightboxThumbnails={true}
               onSelectImage={this.onSelectImage}
               />
