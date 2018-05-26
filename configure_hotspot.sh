@@ -1,5 +1,8 @@
 #! /bin/bash
 
+###  RESOURCE
+# https://www.raspberrypi.org/documentation/configuration/wireless/access-point.md#internet-sharing
+
 ### IMPORTANT!!
 ### NOTE: make sure to update /etc/network/interfaces
 ### ALSO: if wanting to revert this, it should be clear
@@ -46,7 +49,7 @@ EndOfMessage
 
 ## /etc/default/hostapd
 cat > /etc/default/hostapd <<- EndOfMessage
-#DAEMON_CONF="/etc/hostapd/hostapd.conf"
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
 EndOfMessage
 
 sleep 1
